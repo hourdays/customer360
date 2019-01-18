@@ -1,0 +1,1090 @@
+<export><workspace name="customer360"><query name="Explore" focus="false" listorder="1" taborder="1" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="xquery">'use strict';
+declareUpdate();
+ 
+const uri = '/marketing/contact-1223.xml';
+const docroot = cts.doc(uri).root.xpath('/element()');
+const root = xdmp.unquote(`&lt;envelope&gt;&lt;source&gt;${cts.doc(uri).xpath('/contact')}&lt;/source&gt;&lt;/envelope&gt;`);
+ 
+if (fn.name(docroot) === 'envelope') {
+  'envelope root node already exists'
+} else {
+  xdmp.documentInsert(uri, root, [], ['envelope']);
+}
+</query><query name="Load Module" focus="false" listorder="2" taborder="2" active="true" database="4808064014173109440" server="6296369534858219691" database-name="customer360-modules" server-name="App-Services" mode="xquery">xdmp:document-load(
+  "/Users/hjournea/Repositories/customer360/005-Transformation_Module/ex06_transformation_module.xqy",
+  &lt;options xmlns="xdmp:document-load"&gt;
+    &lt;uri&gt;/ex06_transformation_module.xqy&lt;/uri&gt;
+  &lt;/options&gt;
+)
+</query><query name="Get Name" focus="false" listorder="3" taborder="3" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+
+const companyName = 'Campus Bikes';
+
+const coSearchResult = cts.search(cts.andQuery([cts.elementWordQuery(xs.QName('co'),companyName), cts.directoryQuery('/marketing/')]));
+const companySearchResult = cts.search(cts.andQuery([cts.elementWordQuery(xs.QName('company'),companyName), cts.directoryQuery('/marketing/')]));
+const names = [];
+
+for (const item of coSearchResult) {
+  names.push(`${item.xpath('/contact/name/first/text()')} ${item.xpath('/contact/name/last/text()')}`);
+};
+
+for (const item of companySearchResult) {
+  names.push(`${item.xpath('/contact/first-name/text()')} ${item.xpath('/contact/last-name/text()')}`);
+};
+
+names;
+</query><query name="Create Envelope" focus="false" listorder="4" taborder="4" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+declareUpdate();
+ 
+const uri = '/marketing/contact-cs003.xml';
+//const uri = '/marketing/contact-1223.xml';
+//const uri = '/marketing/contact-1828.xml';
+const docroot = cts.doc(uri).root.xpath('/element()');
+const root = xdmp.unquote(`&lt;envelope&gt;&lt;source&gt;${cts.doc(uri).xpath('/contact')}&lt;/source&gt;&lt;/envelope&gt;`);
+if (fn.name(docroot) === 'envelope') {
+  'envelope root node already exists'
+} else {
+  xdmp.documentInsert(uri, root, [], ['envelope']);
+}
+</query><query name="Add Data" focus="false" listorder="5" taborder="5" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+
+// step 1
+//fn.doc('/marketing/contact-cs003.xml');
+
+
+// step 2
+/*
+declareUpdate();
+xdmp.nodeInsertBefore(cts.doc('/marketing/contact-cs003.xml').xpath('/envelope/source'),
+    fn.head(xdmp.unquote('&lt;canonical&gt;&lt;/canonical&gt;')).root);
+*/
+
+// step 3
+/*
+declareUpdate();
+const doc = cts.doc('/marketing/contact-cs003.xml');
+const company = doc.xpath('/envelope/source/contact/company/text()');
+const firstName = doc.xpath('/envelope/source/contact/first-name/text()');
+const lastName = doc.xpath('/envelope/source/contact/last-name/text()');
+
+xdmp.nodeInsertChild(cts.doc('/marketing/contact-cs003.xml').xpath('/envelope/canonical'),
+    fn.head(xdmp.unquote('&lt;company&gt;' + company + '&lt;/company&gt;')).root);
+xdmp.nodeInsertChild(cts.doc('/marketing/contact-cs003.xml').xpath('/envelope/canonical'),
+    fn.head(xdmp.unquote('&lt;firstName&gt;' + firstName + '&lt;/firstName&gt;')).root);
+xdmp.nodeInsertChild(cts.doc('/marketing/contact-cs003.xml').xpath('/envelope/canonical'),
+    fn.head(xdmp.unquote('&lt;lastName&gt;' + lastName + '&lt;/lastName&gt;')).root);
+*/
+
+// step 4
+/*
+declareUpdate();
+xdmp.documentSetCollections('/marketing/contact-cs003.xml', ['canonical']);
+*/
+
+// step 5
+/*
+declareUpdate();
+const docs = cts.search(cts.andQuery(
+            [cts.collectionQuery('envelope'),cts.elementValueQuery('co', 'Campus Bikes')]));
+
+for (const doc of docs) {   
+    const co = doc.xpath('envelope/source/contact/co/text()');
+    const first = doc.xpath('envelope/source/contact/name/first/text()');
+    const last = doc.xpath('envelope/source/contact/name/last/text()');
+
+    xdmp.nodeInsertBefore(doc.xpath('envelope/source'),
+    fn.head(xdmp.unquote(
+        `&lt;canonical&gt; 
+           &lt;company&gt;${co}&lt;/company&gt;
+           &lt;firstName&gt;${first}&lt;/firstName&gt;
+           &lt;lastName&gt;${last}&lt;/lastName&gt;
+        &lt;/canonical&gt;`
+        )
+    ).root);
+
+    xdmp.documentSetCollections(fn.baseUri(doc), 'canonical')
+};
+*/
+
+// step 6
+/*
+declareUpdate();
+xdmp.nodeInsertBefore(cts.doc('/marketing/contact-cs003.xml').xpath('/envelope/source'),
+    fn.head(xdmp.unquote('&lt;metadata&gt;&lt;leadSource&gt;2017 Los Angeles Cycle Show&lt;/leadSource&gt;&lt;leadDate&gt;2017-04-15&lt;/leadDate&gt;&lt;collectedBy&gt;Raffle bowl&lt;/collectedBy&gt;&lt;/metadata&gt;')).root);
+*/
+</query><query name="Query Envelope" focus="false" listorder="6" taborder="6" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="xquery">for $c in /envelope/canonical[company = "Campus Bikes"] 
+return concat($c/firstName/text(), " ", $c/lastName/text())
+</query><query name="Query Envelope" focus="false" listorder="7" taborder="7" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+const names = [];
+for (const doc of fn.collection('canonical')) {
+  if ((doc.xpath('/envelope/canonical/company/text()').toString()) === 'Campus Bikes') {
+    names.push(`${doc.xpath('/envelope/canonical/firstName/text()')} ${doc.xpath('/envelope/canonical/lastName/text()')}`);
+  }
+}
+names;
+</query><query name="Count URIs" focus="false" listorder="8" taborder="8" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="xquery">xquery version "1.0-ml";
+
+let $uris := cts:uris("", (), cts:and-query((cts:directory-query("/marketing/"), cts:collection-query("raw"))))
+
+let $count := fn:count($uris)
+
+return ($count, $uris) 
+</query><query name="Double Metaphone" focus="false" listorder="9" taborder="9" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+// step 1
+/*
+spell.doubleMetaphone("Outback Rides");
+*/
+
+// step 2
+if (fn.deepEqual(spell.doubleMetaphone('Outback Rides'), spell.doubleMetaphone('At Back Rides'))) {
+  'match';
+} else {
+  'no match';
+}
+
+// step 3
+/*
+const docs = [];
+const dm = spell.doubleMetaphone('Dee Monolakis');
+for (const doc of xdmp.directory('/tech-support/')) {
+  if (fn.deepEqual(spell.doubleMetaphone(doc.root.caller), dm)) {
+    docs.push(doc);
+  }
+}
+
+docs;
+*/
+</query><query name="Load JSON with triples" focus="false" listorder="10" taborder="10" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+declareUpdate(); 
+
+xdmp.documentLoad('/Users/hjournea/Repositories/customer360/data/triples/citycruiser.json', {'uri': '/factsheet/citycruiser.json', 'collections': ['raw']})
+</query><query name="Add triples to doc" focus="false" listorder="11" taborder="11" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict'; 
+declareUpdate(); 
+
+const uri = '/factsheet/outbackrides.json' 
+const cols = xdmp.documentGetCollections(uri); 
+const obj = cts.doc(uri).toObject(); 
+
+obj.factsheet.triples = [{ 
+  triple: { 
+    subject: 'http://procycling.com/resource/Outback Rides', 
+    predicate: 'http://procycling.com/ontology/acquiredBy', 
+    object: 'http://procycling.com/resource/Sam_Stone' 
+  } 
+}, { 
+  triple: { 
+    subject: 'http://procycling.com/resource/Outback Rides', 
+    predicate: 'http://procycling.com/ontology/acquiredIn', 
+    object: { 
+      datatype: 'http://www.w3.org/2001/XMLSchema#string', 
+      value: 2016 
+    } 
+  } 
+}]; 
+
+const result = xdmp.documentInsert(uri, obj, { collections: cols }); 
+result === null ? 'Inserted' : `Error: ${result}`;</query><query name="SELECT" focus="false" listorder="12" taborder="12" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sparql">## select 1
+#SELECT ?p ?o 
+#WHERE {&lt;http://procycling.com/resource/Napa_Biking_Tours&gt; ?p ?o}
+
+## select 2
+#SELECT ?p ?o ?p2 ?o2
+#WHERE {&lt;http://procycling.com/resource/Napa_Biking_Tours&gt; ?p ?o . OPTIONAL {?o ?p2 ?o2}}
+
+## select 3
+#SELECT ?s ?o 
+#WHERE {?s &lt;http://procycling.com/ontology/boardMember&gt; ?o}
+
+## select 4
+#SELECT ?s ?o 
+#WHERE {?s &lt;http://procycling.com/ontology/boardMember&gt; | &lt;http://procycling.com/ontology/investor&gt; ?o}
+
+## select 5
+#SELECT ?s ?p ?o 
+#WHERE {?s &lt;http://procycling.com/ontology/boardMember&gt; | &lt;http://procycling.com/ontology/investor&gt; ?o . ?s ?p ?o}
+
+## select 6
+#SELECT * 
+#WHERE {&lt;http://procycling.com/resource/Napa_Biking_Tours&gt; ?p ?o}
+
+## select 7
+SELECT * 
+WHERE {&lt;http://procycling.com/resource/Biking_Winery_Tours&gt; ?p ?o}
+</query><query name="Get Contacts" focus="false" listorder="13" taborder="13" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+
+const data = [];
+for (const doc of xdmp.directory('/marketing/')) {
+  if (doc.xpath('/envelope/canonical/company/text()').toString() === 'Napa Biking Tours') {
+    data.push(`${doc.xpath('/envelope/canonical/company/text()')}: ${doc.xpath('/envelope/canonical/firstName/text()')} ${doc.xpath('/envelope/canonical/lastName/text()')}, ${doc.xpath('/envelope/canonical/email/text()')}`);
+  }
+}
+data;
+</query><query name="Insert sameAs" focus="false" listorder="14" taborder="14" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sparql-update">INSERT DATA 
+{ 
+  &lt;http://procycling.com/resource/Biking_Winery_Tours&gt; 
+  &lt;http://www.w3.org/2002/07/owl#sameAs&gt; 
+  &lt;http://procycling.com/resource/Napa_Biking_Tours&gt; 
+}</query><query name="Path inferencing" focus="false" listorder="15" taborder="15" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sparql">SELECT ?s ?p ?o 
+WHERE {?s ?p ?o .
+?s &lt;http://www.w3.org/2002/07/owl#sameAs&gt;* &lt;http://procycling.com/resource/Napa_Biking_Tours&gt;} </query><query name="IRIs" focus="false" listorder="16" taborder="16" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sparql">SELECT ?s ?p ?o 
+WHERE {?s &lt;http://www.w3.org/2002/07/owl#sameAs&gt;* &lt;http://procycling.com/resource/Napa_Biking_Tours&gt;} </query><query name="Friendly Names" focus="false" listorder="17" taborder="17" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sparql">SELECT ?name
+WHERE {?s &lt;http://www.w3.org/2002/07/owl#sameAs&gt;* &lt;http://procycling.com/resource/Napa_Biking_Tours&gt; . ?s &lt;http://xmlns.com/foaf/0.1/name&gt; ?name}</query><query name="App Code" focus="false" listorder="18" taborder="18" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+const sem = require('/MarkLogic/semantics');
+const data = [];
+const companies = Array.from(sem.sparql('SELECT ?name WHERE {?s &lt;http://www.w3.org/2002/07/owl#sameAs&gt;* &lt;http://procycling.com/resource/Napa_Biking_Tours&gt; . ?s &lt;http://xmlns.com/foaf/0.1/name&gt; ?name}'));
+for (const company of companies) {
+  for (const doc of xdmp.directory('/marketing/')) {
+    if (doc.xpath('/envelope/canonical/company/text()').toString() === company.name) {
+      data.push(`${doc.xpath('/envelope/canonical/company/text()')}: ${doc.xpath('/envelope/canonical/firstName/text()')} ${doc.xpath('/envelope/canonical/lastName/text()')}, ${doc.xpath('/envelope/canonical/email/text()')}`);
+    }
+  }
+}
+
+data;
+</query><query name="TDE XML" focus="false" listorder="19" taborder="19" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="xquery">let $purchases-template :=
+&lt;template xmlns="http://marklogic.com/xdmp/tde"&gt;   
+  &lt;context&gt;/order/items/item&lt;/context&gt; 
+  &lt;rows&gt; 
+    &lt;row&gt; 
+      &lt;schema-name&gt;customer360&lt;/schema-name&gt; 
+      &lt;view-name&gt;purchases&lt;/view-name&gt; 
+      &lt;columns&gt; 
+        &lt;column&gt;
+          &lt;name&gt;product&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;product&lt;/val&gt; 
+          &lt;invalid-values&gt;ignore&lt;/invalid-values&gt; 
+        &lt;/column&gt; 
+        &lt;column&gt;
+          &lt;name&gt;price&lt;/name&gt; 
+          &lt;scalar-type&gt;decimal&lt;/scalar-type&gt; 
+          &lt;val&gt;price&lt;/val&gt; 
+          &lt;invalid-values&gt;ignore&lt;/invalid-values&gt; 
+        &lt;/column&gt;
+        &lt;column&gt;
+          &lt;name&gt;quantity&lt;/name&gt; 
+          &lt;scalar-type&gt;integer&lt;/scalar-type&gt; 
+          &lt;val&gt;quantity&lt;/val&gt; 
+          &lt;invalid-values&gt;ignore&lt;/invalid-values&gt; 
+        &lt;/column&gt;
+      &lt;/columns&gt;
+    &lt;/row&gt;
+  &lt;/rows&gt;
+&lt;/template&gt;
+
+return tde:validate($purchases-template)
+</query><query name="TDE JSON" focus="false" listorder="20" taborder="20" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+
+const purchasesTemplate = xdmp.toJSON(
+{
+ 'template':{
+   'context':'/order/items/item',
+   'rows':[
+     {
+       'schemaName':'customer360',
+       'viewName':'purchases',
+       'columns':[
+         {
+           'name':'product',
+           'scalarType':'string',
+           'val':'product', 
+           'invalidValues':'ignore'
+         },
+         {
+           'name':'price',
+           'scalarType':'decimal',
+           'val':'price', 
+           'invalidValues':'ignore'
+         },
+         {
+           'name':'quantity',
+           'scalarType':'integer',
+           'val':'quantity', 
+           'invalidValues':'ignore'
+         }
+       ]
+     }
+   ]
+ }
+}
+);
+
+tde.validate([purchasesTemplate]);
+</query><query name="SELECT purchases" focus="false" listorder="23" taborder="23" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sql">SELECT * FROM purchases</query><query name="First template" focus="false" listorder="21" taborder="21" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+const tde = require ('/MarkLogic/tde');
+const purchasesTemplate = xdmp.toJSON(
+{
+ 'template':{
+   'context':'/order',
+    'vars':
+     [
+           {
+           'name': 'orderDate',
+           'val':'order-date',
+           },
+           {
+           'name': 'orderNum',
+           'val':'order-num'
+           },
+           {
+           'name':'company',
+           'val':'billing/company'
+           }
+     ],
+   'templates':[
+   {
+   'context':'/items/item',
+   'rows':
+     [
+             {
+               'schemaName':'customer360',
+               'viewName':'purchases',
+               'columns':
+                 [
+                           {
+                             'name':'order_date',
+                             'scalarType':'date',
+                             'val':'$orderDate', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'order_id',
+                             'scalarType':'string',
+                             'val':'$orderNum', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'company',
+                             'scalarType':'string',
+                             'val':'$company', 
+                             'nullable':true
+                           },
+
+                           {
+                             'name':'product',
+                             'scalarType':'string',
+                             'val':'product', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'price',
+                             'scalarType':'decimal',
+                             'val':'price', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'quantity',
+                             'scalarType':'integer',
+                             'val':'quantity', 
+                             'invalidValues':'ignore'
+                           },
+                            {
+                             'name':'row_total',
+                             'scalarType':'decimal',
+                             'val': 'price * quantity', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'notes',
+                             'scalarType':'string',
+                             'val':'notes', 
+                             'nullable':true
+                           }
+                ]
+           }
+         ]
+       }
+    ]
+   }
+  }
+);
+
+//tde.validate([purchasesTemplate]);
+tde.nodeDataExtract([cts.doc('/accounting/order-14502.xml')],[purchasesTemplate]);
+//tde.templateInsert('/templates/purchasesTemplate.json', purchasesTemplate);</query><query name="2nd template" focus="false" listorder="22" taborder="22" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+const tde = require ('/MarkLogic/tde');
+const purchasesSecondTemplate = xdmp.toJSON(
+{
+ 'template':{
+    'context':'/booking',
+    'vars':
+     [
+           {
+           'name': 'orderDate',
+           'val':'date',
+           },
+           {
+           'name': 'orderNum',
+           'val':'@id'
+           },
+           {
+           'name':'company',
+           'val':'customer/company'
+           }
+     ],
+   'templates':[
+   {
+   'context':'line-items/item',
+   'rows':
+     [
+             {
+               'schemaName':'customer360',
+               'viewName':'purchases',
+               'columns':
+                 [
+                           {
+                             'name':'order_date',
+                             'scalarType':'date',
+                             'val':'$orderDate', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'order_id',
+                             'scalarType':'string',
+                             'val':'$orderNum', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'company',
+                             'scalarType':'string',
+                             'val':'$company', 
+                             'nullable':true
+                           },
+
+                           {
+                             'name':'product',
+                             'scalarType':'string',
+                             'val':'product', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'price',
+                             'scalarType':'decimal',
+                             'val':'price', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'quantity',
+                             'scalarType':'integer',
+                             'val':'quantity', 
+                             'invalidValues':'ignore'
+                           },
+                            {
+                             'name':'row_total',
+                             'scalarType':'decimal',
+                             'val': 'price * quantity', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'notes',
+                             'scalarType':'string',
+                             'val':'notes', 
+                             'nullable':true
+                           }
+                ]
+           }
+         ]
+       }
+    ]
+   }
+  }
+);
+
+//tde.validate([purchasesSecondTemplate]);
+tde.nodeDataExtract([cts.doc('/accounting-source02/order-113.xml')],[purchasesSecondTemplate]);
+//tde.templateInsert('/templates/purchasesSecondTemplate.json', purchasesSecondTemplate);</query><query name="u5 Lab" focus="false" listorder="24" taborder="24" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="xquery">import module "http://marklogic.com/xdmp/tde" at "/MarkLogic/tde.xqy";
+
+let $factsheet-template := 
+&lt;template xmlns="http://marklogic.com/xdmp/tde"&gt;
+  &lt;context&gt;factsheet&lt;/context&gt;
+  &lt;rows&gt; 
+    &lt;row&gt; 
+      &lt;schema-name&gt;customer360&lt;/schema-name&gt; 
+      &lt;view-name&gt;factsheets&lt;/view-name&gt; 
+      &lt;columns&gt; 
+        &lt;column&gt;
+          &lt;name&gt;company_name&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;companyName&lt;/val&gt; 
+          &lt;invalid-values&gt;ignore&lt;/invalid-values&gt; 
+        &lt;/column&gt; 
+        &lt;column&gt;
+          &lt;name&gt;headquarters&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;headquarters&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;  
+        &lt;column&gt;
+          &lt;name&gt;phone&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;phone&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt; 
+        &lt;column&gt;
+          &lt;name&gt;website&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;website&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt; 
+        &lt;column&gt;
+          &lt;name&gt;founded&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;founded&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;         
+        &lt;column&gt;
+          &lt;name&gt;employees&lt;/name&gt; 
+          &lt;scalar-type&gt;integer&lt;/scalar-type&gt; 
+          &lt;val&gt;employees&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;
+        &lt;column&gt;
+          &lt;name&gt;yearly_revenue&lt;/name&gt; 
+          &lt;scalar-type&gt;integer&lt;/scalar-type&gt; 
+          &lt;val&gt;yearlyRevenue&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;  
+        &lt;column&gt;
+          &lt;name&gt;market&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;market&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;          
+        &lt;column&gt;
+          &lt;name&gt;notes&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;notes&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;                
+      &lt;/columns&gt;
+    &lt;/row&gt;
+  &lt;/rows&gt;
+&lt;/template&gt;
+
+(: return tde:validate($factsheet-template) :)
+return tde:template-insert("/templates/factsheet-template.xml", $factsheet-template)</query><query name="u5 Lab view" focus="false" listorder="25" taborder="25" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="xquery">xquery version "1.0-ml";
+tde:get-view("customer360", "factsheets")</query><query name="SELECT factsheets" focus="false" listorder="26" taborder="26" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sql">SELECT * FROM factsheets</query><query name="u6 template" focus="false" listorder="27" taborder="27" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="xquery">import module "http://marklogic.com/xdmp/tde" at "/MarkLogic/tde.xqy";
+
+let $support-calls-template := 
+&lt;template xmlns="http://marklogic.com/xdmp/tde"&gt;
+  &lt;context&gt;/id&lt;/context&gt;
+  &lt;rows&gt; 
+    &lt;row&gt; 
+      &lt;schema-name&gt;customer360&lt;/schema-name&gt; 
+      &lt;view-name&gt;calls&lt;/view-name&gt; 
+      &lt;columns&gt; 
+        &lt;column&gt;
+          &lt;name&gt;date_time&lt;/name&gt; 
+          &lt;scalar-type&gt;dateTime&lt;/scalar-type&gt; 
+          &lt;val&gt;../date_and_time&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt; 
+        &lt;column&gt;
+          &lt;name&gt;customer&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;../customer&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;         
+        &lt;column&gt;
+          &lt;name&gt;caller&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;../caller&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;
+        &lt;column&gt;
+          &lt;name&gt;phone&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;../called_from&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;                
+        &lt;column&gt;
+          &lt;name&gt;reason&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;../reason&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt;  
+        &lt;/column&gt;
+        &lt;column&gt;
+          &lt;name&gt;resolved&lt;/name&gt; 
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt; 
+          &lt;val&gt;../resolved&lt;/val&gt; 
+          &lt;nullable&gt;true&lt;/nullable&gt; 
+        &lt;/column&gt;
+        &lt;column&gt;
+          &lt;name&gt;uri&lt;/name&gt;
+          &lt;scalar-type&gt;string&lt;/scalar-type&gt;
+          &lt;val&gt;xdmp:node-uri(.)&lt;/val&gt;
+          &lt;nullable&gt;true&lt;/nullable&gt;
+        &lt;/column&gt;        
+      &lt;/columns&gt;
+    &lt;/row&gt;
+  &lt;/rows&gt;
+&lt;/template&gt;
+
+return tde:template-insert("/templates/support-calls-template.xml", $support-calls-template)</query><query name="JOIN" focus="false" listorder="28" taborder="28" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sql">SELECT calls.customer, calls.caller, calls.phone, calls.reason, calls.resolved, factsheets.market, factsheets.notes
+FROM calls
+INNER JOIN factsheets
+ON calls.customer = factsheets.company_name</query><query name="xdmp:sql" focus="false" listorder="29" taborder="29" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="xquery">xquery version "1.0-ml";
+xdmp:sql("SELECT * FROM calls",(),(),cts:word-query("gears"))
+</query><query name="Optic API" focus="false" listorder="30" taborder="30" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">const op = require('/MarkLogic/optic'); 
+
+op.fromView('customer360', 'calls')
+//.where(cts.wordQuery('tour'))
+  .where(cts.wordQuery('puncture')) //only works if stemming is enabled 
+  .limit(10) 
+  .result()
+</query><query name="Disable 2nd template" focus="false" listorder="31" taborder="31" active="true" database="16526106509978989746" server="6296369534858219691" database-name="customer360-schemas" server-name="App-Services" mode="javascript">'use strict';
+const tde = require ('/MarkLogic/tde');
+const purchasesSecondTemplate = xdmp.toJSON(
+{
+ 'template':{
+    'enabled':false,
+    'context':'/booking',
+    'vars':
+     [
+           {
+           'name': 'orderDate',
+           'val':'date',
+           },
+           {
+           'name': 'orderNum',
+           'val':'@id'
+           },
+           {
+           'name':'company',
+           'val':'customer/company'
+           }
+     ],
+   'templates':[
+   {
+   'context':'line-items/item',
+   'rows':
+     [
+             {
+               'schemaName':'customer360',
+               'viewName':'purchases',
+               'columns':
+                 [
+                           {
+                             'name':'order_date',
+                             'scalarType':'date',
+                             'val':'$orderDate', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'order_id',
+                             'scalarType':'string',
+                             'val':'$orderNum', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'company',
+                             'scalarType':'string',
+                             'val':'$company', 
+                             'nullable':true
+                           },
+
+                           {
+                             'name':'product',
+                             'scalarType':'string',
+                             'val':'product', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'price',
+                             'scalarType':'decimal',
+                             'val':'price', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'quantity',
+                             'scalarType':'integer',
+                             'val':'quantity', 
+                             'invalidValues':'ignore'
+                           },
+                            {
+                             'name':'row_total',
+                             'scalarType':'decimal',
+                             'val': 'price * quantity', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'notes',
+                             'scalarType':'string',
+                             'val':'notes', 
+                             'nullable':true
+                           }
+                ]
+           }
+         ]
+       }
+    ]
+   }
+  }
+);
+
+tde.validate([purchasesSecondTemplate]);
+//tde.templateInsert('/templates/purchasesSecondTemplate.json', purchasesSecondTemplate);</query><query name="Add URI to 1st template" focus="false" listorder="32" taborder="36" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+const tde = require ('/MarkLogic/tde');
+const purchasesTemplate = xdmp.toJSON(
+{
+ 'template':{
+   'context':'/order',
+    'vars':
+     [
+           {
+           'name': 'orderDate',
+           'val':'order-date',
+           },
+           {
+           'name': 'orderNum',
+           'val':'order-num'
+           },
+           {
+           'name':'company',
+           'val':'billing/company'
+           }
+     ],
+   'templates':[
+   {
+   'context':'/items/item',
+   'rows':
+     [
+             {
+               'schemaName':'customer360',
+               'viewName':'purchases',
+               'columns':
+                 [
+                           {
+                             'name':'order_date',
+                             'scalarType':'date',
+                             'val':'$orderDate', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'order_id',
+                             'scalarType':'string',
+                             'val':'$orderNum', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'company',
+                             'scalarType':'string',
+                             'val':'$company', 
+                             'nullable':true
+                           },
+                           {
+                             'name':'product',
+                             'scalarType':'string',
+                             'val':'product', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'price',
+                             'scalarType':'decimal',
+                             'val':'price', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'quantity',
+                             'scalarType':'integer',
+                             'val':'quantity', 
+                             'invalidValues':'ignore'
+                           },
+                            {
+                             'name':'row_total',
+                             'scalarType':'decimal',
+                             'val': 'price * quantity', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'notes',
+                             'scalarType':'string',
+                             'val':'notes', 
+                             'nullable':true
+                           },
+                           {
+                             'name':'uri',
+                             'scalarType':'string',
+                             'val':'xdmp:node-uri(.)', 
+                             'nullable':true
+                           }
+                ]
+           }
+         ]
+       }
+    ]
+   }
+  }
+);
+
+//tde.validate([purchasesTemplate]);
+tde.templateInsert('/templates/purchasesTemplate.json', purchasesTemplate);</query><query name="Delete 2nd template" focus="false" listorder="33" taborder="32" active="true" database="16526106509978989746" server="6296369534858219691" database-name="customer360-schemas" server-name="App-Services" mode="javascript">'use strict';
+declareUpdate();
+xdmp.documentDelete('/templates/purchasesSecondTemplate.json')
+</query><query name="get view" focus="false" listorder="34" taborder="35" active="true" database="15091237001757187305" server="13092501980084968456" database-name="customer360" server-name="3366-customer360-odbc" mode="xquery">xquery version "1.0-ml";
+tde:get-view("customer360", "purchases")
+</query><query name="Disable 1st template" focus="false" listorder="35" taborder="33" active="true" database="15091237001757187305" server="13092501980084968456" database-name="customer360" server-name="3366-customer360-odbc" mode="javascript">'use strict';
+const tde = require ('/MarkLogic/tde');
+const purchasesTemplate = xdmp.toJSON(
+{
+ 'template':{
+   'enabled':false,
+   'context':'/order',
+    'vars':
+     [
+           {
+           'name': 'orderDate',
+           'val':'order-date',
+           },
+           {
+           'name': 'orderNum',
+           'val':'order-num'
+           },
+           {
+           'name':'company',
+           'val':'billing/company'
+           }
+     ],
+   'templates':[
+   {
+   'context':'/items/item',
+   'rows':
+     [
+             {
+               'schemaName':'customer360',
+               'viewName':'purchases',
+               'columns':
+                 [
+                           {
+                             'name':'order_date',
+                             'scalarType':'date',
+                             'val':'$orderDate', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'order_id',
+                             'scalarType':'string',
+                             'val':'$orderNum', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'company',
+                             'scalarType':'string',
+                             'val':'$company', 
+                             'nullable':true
+                           },
+
+                           {
+                             'name':'product',
+                             'scalarType':'string',
+                             'val':'product', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'price',
+                             'scalarType':'decimal',
+                             'val':'price', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'quantity',
+                             'scalarType':'integer',
+                             'val':'quantity', 
+                             'invalidValues':'ignore'
+                           },
+                            {
+                             'name':'row_total',
+                             'scalarType':'decimal',
+                             'val': 'price * quantity', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'notes',
+                             'scalarType':'string',
+                             'val':'notes', 
+                             'nullable':true
+                           }
+                ]
+           }
+         ]
+       }
+    ]
+   }
+  }
+);
+
+//tde.validate([purchasesTemplate]);
+//tde.nodeDataExtract([cts.doc('/accounting/order-14502.xml')],[purchasesTemplate]);
+tde.templateInsert('/templates/purchasesTemplate.json', purchasesTemplate);</query><query name="Delete 1st template" focus="false" listorder="36" taborder="34" active="true" database="16526106509978989746" server="6296369534858219691" database-name="customer360-schemas" server-name="App-Services" mode="javascript">'use strict';
+declareUpdate();
+xdmp.documentDelete('/templates/purchasesTemplate.json')
+</query><query name="Add URI to 2nd" focus="false" listorder="37" taborder="37" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+const tde = require ('/MarkLogic/tde');
+const purchasesSecondTemplate = xdmp.toJSON(
+{
+ 'template':{
+    'context':'/booking',
+    'vars':
+     [
+           {
+           'name': 'orderDate',
+           'val':'date',
+           },
+           {
+           'name': 'orderNum',
+           'val':'@id'
+           },
+           {
+           'name':'company',
+           'val':'customer/company'
+           }
+     ],
+   'templates':[
+   {
+   'context':'line-items/item',
+   'rows':
+     [
+             {
+               'schemaName':'customer360',
+               'viewName':'purchases',
+               'columns':
+                 [
+                           {
+                             'name':'order_date',
+                             'scalarType':'date',
+                             'val':'$orderDate', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'order_id',
+                             'scalarType':'string',
+                             'val':'$orderNum', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'company',
+                             'scalarType':'string',
+                             'val':'$company', 
+                             'nullable':true
+                           },
+
+                           {
+                             'name':'product',
+                             'scalarType':'string',
+                             'val':'product', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'price',
+                             'scalarType':'decimal',
+                             'val':'price', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'quantity',
+                             'scalarType':'integer',
+                             'val':'quantity', 
+                             'invalidValues':'ignore'
+                           },
+                            {
+                             'name':'row_total',
+                             'scalarType':'decimal',
+                             'val': 'price * quantity', 
+                             'invalidValues':'ignore'
+                           },
+                           {
+                             'name':'notes',
+                             'scalarType':'string',
+                             'val':'notes', 
+                             'nullable':true
+                           },
+                           {
+                             'name':'uri',
+                             'scalarType':'string',
+                             'val':'xdmp:node-uri(.)', 
+                             'nullable':true
+                           }
+                ]
+           }
+         ]
+       }
+    ]
+   }
+  }
+);
+
+//tde.validate([purchasesSecondTemplate]);
+//tde.nodeDataExtract([cts.doc('/accounting-source02/order-113.xml')],[purchasesSecondTemplate]);
+tde.templateInsert('/templates/purchasesSecondTemplate.json', purchasesSecondTemplate);</query><query name="op doc join" focus="false" listorder="38" taborder="38" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">const op = require('/MarkLogic/optic'); 
+
+op.fromView('customer360', 'purchases')
+  .where(cts.wordQuery('special'))
+  .joinDoc('doc',op.col('uri'))
+  .select(['order_date', 'order_id', 'company', 'product', 'quantity','uri','doc'])
+  .result()</query><query name="super op" focus="false" listorder="39" taborder="39" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">const op = require('/MarkLogic/optic');
+const resource = op.prefixer('http://procycling.com/resource/'); 
+const onto = op.prefixer('http://procycling.com/ontology/'); 
+const foaf = op.prefixer('http://xmlns.com/foaf/0.1/'); 
+const companyId = op.col('companyId'); 
+const companyName = op.col('companyName'); 
+const sum = op.col('sum'); 
+const purchases = op.fromView('customer360', 'purchases'); 
+
+op.fromTriples([
+op.pattern(companyId, onto('boardMember'), resource('Michael_Ross')),
+op.pattern(companyId, foaf('name'), companyName)
+])
+  .joinInner(purchases, op.on(companyName, purchases.col('company')))
+  .where(cts.wordQuery('tour'))
+  .joinDoc('doc',op.col('uri'))
+  .select(['company', 'row_total', 'uri'])
+  .groupBy('company', [op.sum(sum, 'row_total'),'uri'])
+  .result();
+</query><query name="Entity Svc" focus="false" listorder="40" taborder="40" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+declareUpdate();
+
+const es = require('/MarkLogic/entity-services/entity-services.xqy');
+
+const ES_DIR = '/Users/hjournea/Repositories/customer360/es/'; 
+
+const desc = fn.head(
+xdmp.documentGet(ES_DIR + 'procycling-model-descriptor.json'));
+
+xdmp.documentInsert(
+  '/es/models/procycling-0.0.1.json', es.modelValidate(desc),
+  {collections: ['http://marklogic.com/entity-services/models']}
+);
+</query><query name="ESvc" focus="false" listorder="41" taborder="41" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="sparql">PREFIX t: &lt;http://procycling.com/entity-types#&gt; 
+
+#SELECT ?p ?o 
+DESCRIBE ?p ?o
+WHERE {t:procycling-0.0.1 ?p ?o}</query><query name="Create conv module" focus="false" listorder="42" taborder="42" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict'; 
+const es = require('/MarkLogic/entity-services/entity-services.xqy'); 
+
+const ES_DIR = '/Users/hjournea/Repositories/customer360/es/';
+const desc = cts.doc('/es/models/procycling-0.0.1.json'); 
+
+xdmp.save(ES_DIR + 'procycling-0.0.1-conv.xqy', es.instanceConverterGenerate(desc));</query><query name="Load conv module" focus="false" listorder="43" taborder="43" active="true" database="4808064014173109440" server="6296369534858219691" database-name="customer360-modules" server-name="App-Services" mode="javascript">'use strict'; 
+declareUpdate(); 
+
+const ES_DIR = '/Users/hjournea/Repositories/customer360/es/';
+
+xdmp.documentLoad( 
+  ES_DIR + 'procycling-0.0.1-conv.xqy', 
+  {uri: '/es/procycling-0.0.1-conv.xqy'} 
+);
+</query><query name="Convert" focus="true" listorder="44" taborder="44" active="true" database="15091237001757187305" server="15630965791730575402" database-name="customer360" server-name="8055-customer360" mode="javascript">'use strict';
+declareUpdate();
+
+const es = require('/MarkLogic/entity-services/entity-services.xqy');
+const procycling = require('/es/procycling-0.0.1-conv.xqy');
+
+for (const source of xdmp.directory('/products/')) {
+  let instance = procycling.extractInstanceProduct(source);
+  let uri = '/es/product/' + instance.id + '.xml';
+  xdmp.documentInsert(
+    uri, procycling.instanceToEnvelope(instance),
+    {collections: ['es-product']}
+  );
+}
+</query></workspace></export>
